@@ -17,26 +17,32 @@ router = Router()
 
 @router.message(Command('add_group'))
 async def get_add_group(mess: Message):
-    if mess.from_user.id in [423947942, 5805441535]:
-        print(mess.from_user.id)
-        group_id = mess.chat.id
-        db_add_group(str(group_id))
+    if mess.chat.id < 0 :
+        if mess.from_user.id in [423947942, 5805441535]:
+            print(mess.from_user.id)
+            group_id = mess.chat.id
+            db_add_group(str(group_id))
+        else:
+            await mess.delete()
     else:
-        await mess.delete()
+        pass
 
 
 @router.message(Command('add'))
 async def get_add(mess: Message, command: CommandObject):
-    if mess.from_user.id in [423947942, 5805441535]:
-        group_id = mess.chat.id
-        result = int(command.args)
-        db_group_inv_update(group_id, result)
-        await asyncio.sleep(5)
-        await mess.delete()
-        print(group_id)
-        print(result)
+    if mess.chat.id < 0:
+        if mess.from_user.id in [423947942, 5805441535]:
+            group_id = mess.chat.id
+            result = int(command.args)
+            db_group_inv_update(group_id, result)
+            await asyncio.sleep(5)
+            await mess.delete()
+            print(group_id)
+            print(result)
+        else:
+            await mess.delete()
     else:
-        await mess.delete()
+        pass
 
 # @router.message(Command('edit'))
 # async def bot_settings(mess: Message):
@@ -84,7 +90,7 @@ async def members(mess: Message):
         print(mess.from_user.id)
         for inv in invites:
             print(inv)
-            if inv < threshold[0] and int(mess.from_user.id) not in [423947942, 5805441535]:
+            if inv < threshold[0] and int(mess.from_user.id) not in [423947942, 5805441535] and mess.from_user.is_bot is False:
                 await mess.delete()
                 button_1 = [[InlineKeyboardButton(text='Опубликовать объявления', url='https://t.me/OMKS312_bot')]]
                 markup = InlineKeyboardMarkup(inline_keyboard=button_1)
