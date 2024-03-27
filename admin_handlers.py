@@ -10,14 +10,14 @@ from aiogram.types import FSInputFile, BufferedInputFile
 
 from DB import conn
 from func_db import invite_user, you_invite, db_update_invate, db_select_users, db_add_group, db_group_invites, \
-    db_group_inv_update
+    db_group_inv_update, save_user
 
 router = Router()
 
 
 @router.message(Command('add_group'))
 async def get_add_group(mess: Message):
-    if mess.chat.id < 0 :
+    if mess.chat.id < 0:
         if mess.from_user.id in [423947942, 5805441535]:
             print(mess.from_user.id)
             group_id = mess.chat.id
@@ -81,9 +81,11 @@ async def new_members(mess: Message):
 @router.message()
 async def members(mess: Message):
     """Функция не пропускает текстовое сообщения пока не будет 10 приглашенных участников"""
+
     if int(mess.chat.id) < 0:
         user_id = mess.from_user.id
         group_id = mess.chat.id
+        save_user(str(group_id))
         threshold = db_group_invites(str(group_id))
         invites = you_invite(user_id)
         print(threshold[0])

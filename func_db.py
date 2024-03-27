@@ -13,6 +13,14 @@ def invite_user(user_id, invite: int):
         return f'пока что то'
 
 
+def save_user(user_id):
+    with conn.cursor() as cur:
+        insert_query = """INSERT INTO users_invtes(user_id, invites) VALUES (%s, 0)
+        ON CONFLICT (user_id) DO NOTHING;"""
+        cur.execute(insert_query, (user_id, ))
+        return f'пока что то'
+
+
 def you_invite(user_id):
     with conn.cursor() as cur:
         select_query = '''SELECT invites fROM users_invtes WHERE user_id = '%s';'''
