@@ -85,7 +85,7 @@ async def members(mess: Message):
     if int(mess.chat.id) < 0:
         user_id = mess.from_user.id
         group_id = mess.chat.id
-        save_user(str(group_id))
+        save_user(str(user_id))
         threshold = db_group_invites(str(group_id))
         invites = you_invite(user_id)
         print(threshold[0])
