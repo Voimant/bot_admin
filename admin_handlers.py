@@ -29,11 +29,11 @@ async def get_open_chat(mess: Message, command: CommandObject):
             except Exception as e:
                 print(e)
                 await mess.answer('Введите число')
-                await asyncio.sleep(10)
+                await asyncio.sleep(20)
         else:
             await mess.delete()
             await mess.answer('Команды только для администратора')
-            await asyncio.sleep(10)
+            await asyncio.sleep(20)
 
 
 
@@ -138,7 +138,7 @@ async def members(mess: Message):
                                                 f' НА ДАННЫЙ МОМЕНТ ВЫ ДОБАВИЛИ: 👉🏻 {inv} пользователей\n'
                                                 f'А если вам понравился бот и хочешь такого же жми сюда 👉🏻 https://t.me/nbchatbot_bot', reply_markup=markup)
                     print(mess.from_user.id)
-                    await asyncio.sleep(20)
+                    await asyncio.sleep(30)
                     try:
                         await new_msg.delete()
                     except Exception as e:
