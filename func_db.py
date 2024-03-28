@@ -1,24 +1,45 @@
 import pandas as pd
 import psycopg2.extras
 # from psycopg2.errors import UniqueViolation
-
+import psycopg2.errors
 from DB import conn
 
 
-def invite_user(user_id, invite: int):
+def db_update(username, inv: int):
     with conn.cursor() as cur:
-        insert_query = """INSERT INTO users_invtes(user_id, invites) VALUES (%s, %s)
-        ON CONFLICT (user_id) DO NOTHING;"""
-        cur.execute(insert_query, (user_id, invite))
-        return f'пока что то'
+        update_query = '''UPDATE users_invtes SET invites = {}  WHERE username = '{}';'''.format(inv, username )
+        cur.execute(update_query)
+        conn.commit()
 
 
-def save_user(user_id):
+def invite_user(user_id, invite: int, username):
+    """Добавляет нового человека в базу  ставит изначальное значение 0"""
     with conn.cursor() as cur:
-        insert_query = """INSERT INTO users_invtes(user_id, invites) VALUES (%s, 0)
+        insert_query = """INSERT INTO users_invtes(user_id, invites, username) VALUES (%s, %s, %s)
         ON CONFLICT (user_id) DO NOTHING;"""
-        cur.execute(insert_query, (user_id, ))
-        return f'пока что то'
+        try:
+            cur.execute(insert_query, (user_id, invite, username))
+        except (Exception, psycopg2.errors) as e:
+            cur.close()
+            print(e)
+            return f'пока что то'
+        finally:
+            cur.close()
+
+
+def save_user(user_id, username):
+    with conn.cursor() as cur:
+        insert_query = """INSERT INTO users_invtes(user_id, invites, username) VALUES (%s, 0, %s)
+        ON CONFLICT (user_id) DO NOTHING;"""
+        try:
+            cur.execute(insert_query, (user_id, username))
+            conn.commit()
+        except (Exception, psycopg2.errors) as e:
+            cur.close()
+            print(e)
+        finally:
+            cur.close()
+
 
 
 def you_invite(user_id):
@@ -46,10 +67,11 @@ def db_select_users():
         return res_list
 
 
-def db_add_group(group_id : str):
+def db_add_group(group_id: str):
     with conn.cursor() as cur:
-        insert_query = "INSERT INTO groups(group_id, inv) VALUES ('{}', 10) ON CONFLICT (group_id) DO NOTHING;".format(group_id)
-        cur.execute(insert_query,)
+        insert_query = "INSERT INTO groups(group_id, inv) VALUES ('{}', 10) ON CONFLICT (group_id) DO NOTHING;".format(
+            group_id)
+        cur.execute(insert_query, )
         conn.commit()
 
 
@@ -69,9 +91,5 @@ def db_group_inv_update(group_id, inv):
         update_query = ("UPDATE groups SET inv = {} WHERE group_id = '{}'").format(inv, str(group_id))
         cur.execute(update_query)
         conn.commit()
-
-
-
-
 
 # print(db_select_users())

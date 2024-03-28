@@ -20,7 +20,8 @@ with psycopg2.connect(user=USER,
         with conn.cursor() as cur:
             create_query = """ CREATE TABLE IF NOT EXISTS users_invtes(
                                 user_id VARCHAR(150) PRIMARY KEY,
-                                invites INTEGER);
+                                invites INTEGER,
+                                username VARCHAR);
                                 CREATE TABLE IF NOT EXISTS groups(
                                 group_id VARCHAR(150) PRIMARY KEY,
                                 inv INTEGER);"""
@@ -38,7 +39,8 @@ with psycopg2.connect(user=USER,
         :return: База данных удалена
         """
         with conn.cursor() as cur:
-            delete_query = """DROP TABLE users;"""
+            delete_query = """DROP TABLE groups;
+            DROP TABLE users_invtes"""
             cur.execute(delete_query)
             return 'База данных удалена'
 
