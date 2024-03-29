@@ -82,34 +82,35 @@ async def get_add(mess: Message, command: CommandObject):
 #         await new_msg.delete()
 
 
-#@router.message(F.content_type == types.ContentType.NEW_CHAT_MEMBERS)
+#@router.message(F.content_type == types.ContentType.NEW_CHAT_MEMBERS)ChatMemberUpdatedFilter
 @router.chat_member(ChatMemberUpdatedFilter(JOIN_TRANSITION))
-async def new_members(mess: ChatMember):
+async def new_members(mem: ChatMember):
     """При событии добавления нового учасника, добавляем в базу
     -- Добавляет в базу нового участника, ставит inv = 0
     -- + 1 человек, узеру которойй добавил пользователя"""
-    print(mess.from_user.id)
-    my_db = db_select_users()
-    if str(mess.from_user.id) in my_db:
-        pass
-    else:
-        inv = 0
-        username = mess.from_user.username
-        invite_user(mess.from_user.id, inv, username)
-    for user in mess.new_chat_members:
-        inviter = None
-        if user.id:
-            inviter = user.id
-        elif user.sender_chat:
-            inviter = user.sender_chat.user.id
-        print(f"Пользователь {user.full_name} был приглашен {inviter}\n"
-              f"Пригласивший: {mess.from_user.id}\n")
-        inv = 0
-        for y_user in mess.new_chat_members:
-            you_username = y_user.username
-            invite_user(inviter, inv, you_username)
-            db_update_invate(mess.from_user.id)
-            conn.commit()
+    # print(mess.from_user.id)
+    # my_db = db_select_users()
+    # if str(mess.from_user.id) in my_db:
+    #     pass
+    # else:
+    #     inv = 0
+    #     username = mess.from_user.username
+    #     invite_user(mess.from_user.id, inv, username)
+    # for user in mess.new_chat_members:
+    #     inviter = None
+    #     if user.id:
+    #         inviter = user.id
+    #     elif user.sender_chat:
+    #         inviter = user.sender_chat.user.id
+    #     print(f"Пользователь {user.full_name} был приглашен {inviter}\n"
+    #           f"Пригласивший: {mess.from_user.id}\n")
+    #     inv = 0
+    #     for y_user in mess.new_chat_members:
+    #         you_username = y_user.username
+    #         invite_user(inviter, inv, you_username)
+    #         db_update_invate(mess.from_user.id)
+    #         conn.commit()
+    print(mem)
 
 
 # @router.message()
