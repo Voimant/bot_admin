@@ -122,8 +122,8 @@ async def members(mess: Message):
         try:
             threshold = db_group_invites(str(group_id))
             invites = you_invite(user_id)
+            print(mess)
             for inv in invites:
-
                 if inv < threshold[0] and int(mess.from_user.id) not in [5805441535] and mess.from_user.is_bot is False and mess.forward_origin is None:
                     print('отработало первое условие')
                     await mess.delete()
@@ -157,7 +157,7 @@ async def members(mess: Message):
 
                 elif inv >= threshold[0] or mess.from_user.id in [423947942, 5805441535]:
                     pass
-                
+
         except TypeError:
             await mess.answer('Группа не добавлена в базу, напишите разработчикам что бы начать пользоваться ботом\n https://t.me/nbchatbot_bot')
     else:
