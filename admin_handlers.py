@@ -19,7 +19,7 @@ router = Router()
 async def get_open_chat(mess: Message, command: CommandObject):
     """Принудительно установить инвайты пользователя"""
     if mess.chat.id < 0:
-        if mess.from_user.id in [423947942, 5805441535]:
+        if mess.from_user.id in [5805441535]:
             try:
                 result = command.args
                 result_list = result.split(' ')
@@ -40,7 +40,7 @@ async def get_open_chat(mess: Message, command: CommandObject):
 async def get_add_group(mess: Message):
     """Добавление группы в отслеживаемые у бота"""
     if mess.chat.id < 0:
-        if mess.from_user.id in [423947942, 5805441535]:
+        if mess.from_user.id in [5805441535]:
             print(mess.from_user.id)
             group_id = mess.chat.id
             db_add_group(str(group_id))
@@ -55,7 +55,7 @@ async def get_add_group(mess: Message):
 async def get_add(mess: Message, command: CommandObject):
     """Установить порог добавления участников в группу, для возможности написания сообщений"""
     if mess.chat.id < 0:
-        if mess.from_user.id in [423947942, 5805441535]:
+        if mess.from_user.id in [5805441535]:
             group_id = mess.chat.id
             result = int(command.args)
             db_group_inv_update(group_id, result)

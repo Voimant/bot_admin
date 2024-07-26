@@ -45,5 +45,5 @@ with psycopg2.connect(user=USER,
             return 'База данных удалена'
 
 
-    #print(delete_db())
+   # print(delete_db())
     conn.commit()
