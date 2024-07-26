@@ -1,5 +1,6 @@
 import asyncio
 from asyncio import sleep
+from pprint import pprint
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import types, Dispatcher, Router, F
@@ -19,7 +20,7 @@ router = Router()
 async def get_open_chat(mess: Message, command: CommandObject):
     """Принудительно установить инвайты пользователя"""
     if mess.chat.id < 0:
-        if mess.from_user.id in [5805441535]:
+        if mess.from_user.id in [5805441535, 423947942]:
             try:
                 result = command.args
                 result_list = result.split(' ')
@@ -39,8 +40,9 @@ async def get_open_chat(mess: Message, command: CommandObject):
 @router.message(Command('add_group'))
 async def get_add_group(mess: Message):
     """Добавление группы в отслеживаемые у бота"""
+    print(mess.from_user.id)
     if mess.chat.id < 0:
-        if mess.from_user.id in [5805441535]:
+        if mess.from_user.id in [5805441535, 423947942]:
             print(mess.from_user.id)
             group_id = mess.chat.id
             db_add_group(str(group_id))
@@ -55,7 +57,7 @@ async def get_add_group(mess: Message):
 async def get_add(mess: Message, command: CommandObject):
     """Установить порог добавления участников в группу, для возможности написания сообщений"""
     if mess.chat.id < 0:
-        if mess.from_user.id in [5805441535]:
+        if mess.from_user.id in [5805441535, 423947942]:
             group_id = mess.chat.id
             result = int(command.args)
             db_group_inv_update(group_id, result)
@@ -116,14 +118,14 @@ async def members(mess: Message):
         group_id = mess.chat.id
         username = mess.from_user.username
         save_user(str(user_id), username)
+
         try:
             threshold = db_group_invites(str(group_id))
             invites = you_invite(user_id)
-            print(threshold[0])
-            print(mess.from_user.id)
             for inv in invites:
-                print(inv)
-                if inv < threshold[0] and int(mess.from_user.id) not in [423947942, 5805441535] and mess.from_user.is_bot is False:
+
+                if inv < threshold[0] and int(mess.from_user.id) not in [5805441535] and mess.from_user.is_bot is False and mess.forward_origin is None:
+                    print('отработало первое условие')
                     await mess.delete()
                     button_1 = [[InlineKeyboardButton(text='Опубликовать объявления', url='https://t.me/OMKS312_bot')]]
                     markup = InlineKeyboardMarkup(inline_keyboard=button_1)
@@ -133,14 +135,29 @@ async def members(mess: Message):
                                                 f'нажмите кнопку ниже\n\n'
                                                 f' НА ДАННЫЙ МОМЕНТ ВЫ ДОБАВИЛИ: 👉🏻 {inv} пользователей\n'
                                                 f'А если вам понравился бот и хочешь такого же жми сюда 👉🏻 https://t.me/nbchatbot_bot', reply_markup=markup)
-                    print(mess.from_user.id)
                     await asyncio.sleep(30)
+
                     try:
                         await new_msg.delete()
                     except Exception as e:
                         print(e)
+
+                elif mess.forward_origin is not None:
+                    try:
+                        if mess.forward_origin.chat.id < 0 and mess.from_user.id not in [5805441535]:
+                            await mess.delete()
+                            new_msg = await mess.answer('Нельзя пересылать сообщения из групп и каналов')
+                            await asyncio.sleep(30)
+                            try:
+                                await new_msg.delete()
+                            except Exception as e:
+                                print(e)
+                    except AttributeError:
+                        pass
+
                 elif inv >= threshold[0] or mess.from_user.id in [423947942, 5805441535]:
                     pass
+                
         except TypeError:
             await mess.answer('Группа не добавлена в базу, напишите разработчикам что бы начать пользоваться ботом\n https://t.me/nbchatbot_bot')
     else:
