@@ -142,6 +142,15 @@ async def members(mess: Message):
                     except Exception as e:
                         print(e)
 
+                elif int(mess.from_user.id) < 0:
+                    await mess.delete()
+                    new_msg = await mess.answer('Нельзя пересылать сообщения из групп и каналов, а так же публиковать от имени групп')
+                    await asyncio.sleep(30)
+                    try:
+                        await new_msg.delete()
+                    except Exception as e:
+                        print(e)
+
                 elif mess.forward_origin is not None:
                     try:
                         if mess.forward_origin.chat.id < 0 and mess.from_user.id not in [5805441535]:
