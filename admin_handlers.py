@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from asyncio import sleep
 from pprint import pprint
 
@@ -118,14 +119,17 @@ async def members(mess: Message):
         group_id = mess.chat.id
         username = mess.from_user.username
         save_user(str(user_id), username)
+        print(mess)
+
 
         try:
             threshold = db_group_invites(str(group_id))
             invites = you_invite(user_id)
-            print(mess)
+            # print(mess)
             for inv in invites:
                 if inv < threshold[0] and int(mess.from_user.id) not in [5805441535] and mess.from_user.is_bot is False and mess.forward_origin is None:
-                    print('отработало первое условие')
+                    logging.info('Отработало условие где добавлено меньше 10 человек')
+
                     await mess.delete()
                     button_1 = [[InlineKeyboardButton(text='Опубликовать объявления', url='https://t.me/OMKS312_bot')]]
                     markup = InlineKeyboardMarkup(inline_keyboard=button_1)
@@ -143,6 +147,7 @@ async def members(mess: Message):
                         print(e)
 
                 elif int(mess.from_user.id) < 0:
+                    logging.info('Отработало условие где id меньше 0')
                     await mess.delete()
                     new_msg = await mess.answer('Нельзя пересылать сообщения из групп и каналов, а так же публиковать от имени групп')
                     await asyncio.sleep(30)
@@ -152,6 +157,7 @@ async def members(mess: Message):
                         print(e)
 
                 elif mess.forward_origin is not None:
+                    logging.info('отработало условие пересылаемых сообщений')
                     try:
                         if mess.forward_origin.chat.id < 0 and mess.from_user.id not in [5805441535]:
                             await mess.delete()
@@ -165,6 +171,7 @@ async def members(mess: Message):
                         pass
 
                 elif inv >= threshold[0] or mess.from_user.id in [423947942, 5805441535]:
+                    logging.info('сообщение прошло проверки и опубликовано')
                     pass
 
         except TypeError:
