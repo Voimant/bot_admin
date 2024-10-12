@@ -110,7 +110,7 @@ async def new_members(mem: ChatMember):
     print(mem)
 
 
-@router.message(~F.forward_from_chat)
+@router.message(F.forward_from_chat)
 async def forward(mess: Message):
     """Функция не пропускает текстовое сообщения пока не будет 10 приглашенных участников"""
     if int(mess.chat.id) < 0:
