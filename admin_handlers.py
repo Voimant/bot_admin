@@ -110,6 +110,28 @@ async def new_members(mem: ChatMember):
     print(mem)
 
 
+@router.message(F.forward_from_chat)
+async def forward(mess: Message):
+    """Функция не пропускает текстовое сообщения пока не будет 10 приглашенных участников"""
+
+    if int(mess.chat.id) < 0:
+        user_id = mess.from_user.id
+        group_id = mess.chat.id
+        username = mess.from_user.username
+        save_user(str(user_id), username)
+        print(mess)
+        try:
+            threshold = db_group_invites(str(group_id))
+            await mess.delete()
+            bot_mess = await mess.answer('Пересылать сообщения и писать от имени группы запрещено')
+            await asyncio.sleep(30)
+            await bot_mess.delete()
+        except TypeError:
+            await mess.answer('Группа не добавлена в базу, напишите разработчикам что бы начать пользоваться ботом\n https://t.me/nbchatbot_bot')
+    else:
+        await mess.answer('Чат бот предназначен для использования в группах, обратитесь к разработчикам или администратору')
+
+
 @router.message()
 async def members(mess: Message):
     """Функция не пропускает текстовое сообщения пока не будет 10 приглашенных участников"""
