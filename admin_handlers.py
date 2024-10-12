@@ -113,7 +113,6 @@ async def new_members(mem: ChatMember):
 @router.message(F.forward_from_chat)
 async def forward(mess: Message):
     """Функция не пропускает текстовое сообщения пока не будет 10 приглашенных участников"""
-
     if int(mess.chat.id) < 0:
         user_id = mess.from_user.id
         group_id = mess.chat.id
@@ -121,6 +120,7 @@ async def forward(mess: Message):
         save_user(str(user_id), username)
         print(mess)
         try:
+            logging.info('Отработал новый хендлер')
             threshold = db_group_invites(str(group_id))
             await mess.delete()
             bot_mess = await mess.answer('Пересылать сообщения и писать от имени группы запрещено')
